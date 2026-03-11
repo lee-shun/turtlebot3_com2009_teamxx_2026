@@ -24,6 +24,7 @@ install(PROGRAMS
   scripts/basic_velocity_control.py
   scripts/stop_me.py
   scripts/task1.py
+  scripts/task2.py
   scripts/task1_test.py
   scripts/task1_test2.py
   DESTINATION lib/${PROJECT_NAME}

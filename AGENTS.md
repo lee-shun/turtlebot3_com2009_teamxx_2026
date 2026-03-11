@@ -4,14 +4,7 @@
 
 ### Build Commands
 ```bash
-# Build the entire workspace
-colcon build
-
-# Build specific package
-colcon build --packages-select com2009_teamxx_2026
-
-# Build with verbose output
-colcon build --symlink-install --packages-select com2009_teamxx_2026 -v
+# DO NOT build the code
 ```
 
 ### Source Commands

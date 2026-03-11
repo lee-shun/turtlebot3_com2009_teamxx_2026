@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task2 - 障碍物避免与探索系统文档</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .mermaid {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .diagram-container {
+            margin: 30px 0;
+        }
+        .diagram-title {
+            text-align: center;
+            font-size: 1.3em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+        }
+        h3 {
+            color: #7f8c8d;
+            margin-top: 25px;
+        }
+        .class-diagram {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+        .class-box {
+            border: 2px solid #2c3e50;
+            background: white;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 5px;
+        }
+        .class-name {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        .methods, .attributes {
+            margin: 10px 0;
+        }
+        .method, .attr {
+            padding: 5px 10px;
+            margin: 3px 0;
+            background: #f8f9fa;
+            border-radius: 3px;
+        }
+        .method:before {
+            content: "+ ";
+            color: #27ae60;
+        }
+        .attr:before {
+            content: "- ";
+            color: #e74c3c;
+        }
+        .flowchart {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .flowchart ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .flowchart li {
+            margin: 8px 0;
+        }
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+        }
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .param-table th, .param-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .param-table th {
+            background: #3498db;
+            color: white;
+        }
+        .param-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        .status {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .status-done {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-progress {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-todo {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .diagram-arrows {
+            text-align: center;
+            font-size: 1.5em;
+            color: #7f8c8d;
+            margin: 5px 0;
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #7f8c8d;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+</head>
+<body>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                curve: 'basis',
+                nodeSpacing: 50,
+                rankSpacing: 60
+            },
+            sequence: {
+                diagramMarginX: 50,
+                diagramMarginY: 20,
+                actorMargin: 60
+            }
+        });
+    </script>
+</body>
+    <div class="container">
+        <h1>Task2 - 障碍物避免与探索系统</h1>
+        <p><strong>文件:</strong> scripts/task2.py | <strong>ROS2 节点:</strong> obstacle_avoidance | <strong>状态:</strong> <span class="status status-progress">开发中</span></p>
+        
+        <h2>概述</h2>
+        <p>基于 Braitenberg Vehicle 3b 策略的 TurtleBot3 自主探索系统，在 4x4m 竞技场中实现 90 秒内的障碍物避免和区域探索。</p>
+        
+        <table class="param-table">
+            <tr>
+                <th>功能</th>
+                <th>状态</th>
+                <th>描述</th>
+            </tr>
+            <tr>
+                <td>LiDAR 数据处理</td>
+                <td><span class="status status-done">已完成</span></td>
+                <td>7 个方向距离测量（前、后、左、右、前左、前右、后）</td>
+            </tr>
+            <tr>
+                <td>里程计跟踪</td>
+                <td><span class="status status-done">已完成</span></td>
+                <td>实时位置 (x, y) 和偏航角 (yaw) 跟踪</td>
+            </tr>
+            <tr>
+                <td>基础移动函数</td>
+                <td><span class="status status-done">已完成</span></td>
+                <td>时间/距离/角度控制的移动和旋转</td>
+            </tr>
+            <tr>
+                <td>障碍物检测</td>
+                <td><span class="status status-done">已完成</span></td>
+                <td>线程安全的 LiDAR 数据访问</td>
+            </tr>
+            <tr>
+                <td>探索策略</td>
+                <td><span class="status status-progress">进行中</span></td>
+                <td>当前为测试序列，需要实现完整探索算法</td>
+            </tr>
+            <tr>
+                <td>区域跟踪</td>
+                <td><span class="status status-todo">待完成</span></td>
+                <td>12 个 1x1m 探索区域的访问跟踪</td>
+            </tr>
+        </table>
+
+        <h2>类结构图</h2>
+        <div class="class-diagram">
+            <div class="class-box">
+                <div class="class-name">ObstacleAvoidance (继承自 Node)</div>
+                <div class="attributes">
+                    <strong>属性:</strong>
+                    <div class="attr">safe_distance: float = 0.6</div>
+                    <div class="attr">linear_vel: float = 0.3</div>
+                    <div class="attr">angular_vel: float = 0.5</div>
+                    <div class="attr">explore_angular: float = 0.05</div>
+                    <div class="attr">x, y, yaw: float</div>
+                    <div class="attr">front, left, right, back, front_left, front_right: float</div>
+                    <div class="attr">start_time: float</div>
+                    <div class="attr">running: bool = True</div>
+                    <div class="attr">has_lidar_data: bool</div>
+                </div>
+                <div class="methods">
+                    <strong>方法:</strong>
+                    <div class="method">lidar_callback(msg: LaserScan)</div>
+                    <div class="method">odom_callback(msg: Odometry)</div>
+                    <div class="method">rotate_by(direction: str, ang_vel: float, duration: float)</div>
+                    <div class="method">go_by(direction: str, lin_vel: float, duration: float)</div>
+                    <div class="method">go_until(distance: float, err: float)</div>
+                    <div class="method">roatae_unitl(direction: str, deg: float, err: float)</div>
+                    <div class="method">main_loop()</div>
+                    <div class="method">run()</div>
+                </div>
+            </div>
+        </div>
+
+        <h2>流程图</h2>
+        <div class="diagram-container">
+            <div class="diagram-title">主程序执行流程图</div>
+            <div class="mermaid">
+flowchart TD
+    A[程序启动] --> B[rclpy.init]
+    B --> C[创建 ObstacleAvoidance 节点]
+    C --> D[订阅 /scan 和 /odom]
+    D --> E[创建 /cmd_vel 发布者]
+    E --> F[初始化参数和状态变量]
+    F --> G[调用 node.main_loop]
+    G --> H[创建 SingleThreadedExecutor]
+    H --> I[启动 run 线程]
+    I --> J{主循环}
+    J --> K[检查 LiDAR 数据更新]
+    K --> L[检查 90 秒超时]
+    L -->|超时 | M[设置 running=False]
+    L -->|未超时 | N[executor.spin_once]
+    N --> J
+    M --> O[等待 run 线程结束]
+    J -->|KeyboardInterrupt| O
+    O --> P[发布零速度命令]
+    P --> Q[executor.shutdown]
+    Q --> R[destroy_node]
+    R --> S[rclpy.shutdown]
+    S --> T[程序结束]
+    
+    I -.-> U[run 线程执行]
+    U --> V[time.sleep 0.5s]
+    V --> W[rotate_until left 45 度]
+    W --> X[go_until 2 米]
+    X --> Y{继续探索？}
+    Y -->|是 | W
+    Y -->|否 | O
+    
+    style A fill:#e74c3c,color:#fff
+    style T fill:#27ae60,color:#fff
+    style M fill:#e67e22,color:#fff
+    style U stroke:#3498db,stroke-width:3px
+            </div>
+        </div>
+
+        <div class="diagram-container">
+            <div class="diagram-title">go_until 函数流程图</div>
+            <div class="mermaid">
+flowchart TD
+    A[go_until 开始] --> B[获取初始位置 init_x, init_y]
+    B --> C[进入循环]
+    C --> D[获取当前位置 current_x, current_y]
+    D --> E[计算已走距离 traveled]
+    E --> F{traveled >= distance - err?}
+    F -->|是 | G[目标达成，退出循环]
+    F -->|否 | H[读取前方 LiDAR 距离 front_dist]
+    H --> I{front_dist < safe_distance?}
+    I -->|是 | J[检测到障碍物，退出循环]
+    I -->|否 | K[发布前进命令 linear.x=0.3]
+    K --> L[spin_once timeout=0.1s]
+    L --> C
+    G --> M[发布停止命令]
+    J --> M
+    M --> N[函数结束]
+    
+    style A fill:#3498db,color:#fff
+    style G fill:#27ae60,color:#fff
+    style J fill:#e67e22,color:#fff
+    style N fill:#95a5a6,color:#fff
+            </div>
+        </div>
+
+        <div class="diagram-container">
+            <div class="diagram-title">rotate_until 函数流程图</div>
+            <div class="mermaid">
+flowchart TD
+    A[rotate_until 开始] --> B[获取初始 yaw 角度 init_yaw]
+    B --> C[进入循环]
+    C --> D[获取当前 yaw 角度 current_yaw]
+    D --> E[计算角度差 angle_diff]
+    E --> F[处理角度 wrap-around]
+    F --> G[计算旋转角度 rotated_deg]
+    G --> H{rotated_deg >= deg - err?}
+    H -->|是 | I[旋转完成，退出循环]
+    H -->|否 | J[发布旋转命令]
+    J --> K{direction == left?}
+    K -->|是 | L[angular.z = +angular_vel]
+    K -->|否 | M[angular.z = -angular_vel]
+    L --> N[spin_once timeout=0.1s]
+    M --> N
+    N --> C
+    I --> O[发布停止命令]
+    O --> P[函数结束]
+    
+    style A fill:#3498db,color:#fff
+    style I fill:#27ae60,color:#fff
+    style P fill:#95a5a6,color:#fff
+            </div>
+        </div>
+
+        <h2>时序图</h2>
+        <div class="diagram-container">
+            <div class="diagram-title">系统启动与运行时序图</div>
+            <div class="mermaid">
+sequenceDiagram
+    participant Main as main 函数
+    participant Node as ObstacleAvoidance 节点
+    participant Executor as Executor
+    participant RunThread as run 线程
+    participant LiDAR as LiDAR 回调
+    participant Odom as Odom 回调
+    participant ROS as ROS2 系统
+    
+    Main->>Main: rclpy.init
+    Main->>Node: 创建 ObstacleAvoidance 实例
+    Node->>Node: __init__ 初始化
+    Node->>ROS: 订阅 /scan 话题
+    Node->>ROS: 订阅 /odom 话题
+    Node->>ROS: 创建 /cmd_vel 发布者
+    Main->>Node: 调用 main_loop
+    Node->>Executor: 创建 SingleThreadedExecutor
+    Node->>RunThread: 启动 run 线程
+    Node->>Node: 进入主循环
+    
+    loop 主循环 (直到 90 秒或中断)
+        Node->>Node: 检查 LiDAR 数据时间
+        Node->>Node: 检查运行时间
+        Node->>Executor: spin_once
+        Executor->>LiDAR: 触发 lidar_callback
+        LiDAR->>LiDAR: 更新 7 个方向距离
+        Executor->>Odom: 触发 odom_callback
+        Odom->>Odom: 更新位置 (x,y,yaw)
+    end
+    
+    RunThread->>RunThread: sleep 0.5s
+    RunThread->>Node: 调用 rotate_until
+    RunThread->>Node: 调用 go_until
+    RunThread->>Node: 继续探索策略
+    
+    alt 90 秒超时或中断
+        Node->>Node: 设置 running=False
+        Node->>RunThread: 等待线程结束
+        Node->>ROS: 发布零速度命令
+        Node->>Executor: shutdown
+        Node->>Node: destroy_node
+    end
+    
+    Main->>Main: rclpy.shutdown
+            </div>
+        </div>
+
+        <div class="diagram-container">
+            <div class="diagram-title">go_until 运行时序图（含障碍物检测）</div>
+            <div class="mermaid">
+sequenceDiagram
+    participant Run as run 线程
+    participant GoUntil as go_until 函数
+    participant OdomLock as odom_lock
+    participant LiDARLock as lidar_lock
+    participant Pub as cmd_vel_pub
+    
+    Run->>GoUntil: 调用 go_until(2.0, 0.1)
+    GoUntil->>OdomLock: 获取锁
+    OdomLock->>GoUntil: 返回 init_x, init_y
+    GoUntil->>OdomLock: 释放锁
+    
+    loop 移动循环
+        GoUntil->>OdomLock: 获取锁
+        OdomLock->>GoUntil: 返回 current_x, current_y
+        GoUntil->>OdomLock: 释放锁
+        GoUntil->>GoUntil: 计算 traveled 距离
+        GoUntil->>GoUntil: 检查 traveled >= distance - err
+        
+        alt 达到目标距离
+            GoUntil->>GoUntil: 退出循环
+        else 未达目标
+            GoUntil->>LiDARLock: 获取锁
+            LiDARLock->>GoUntil: 返回 front_dist
+            GoUntil->>LiDARLock: 释放锁
+            
+            alt 检测到障碍物
+                GoUntil->>GoUntil: 警告日志，退出循环
+            else 无障碍物
+                GoUntil->>Pub: 发布 velocity(0.3, 0.0)
+                Pub-->>GoUntil: 发布成功
+                GoUntil->>GoUntil: spin_once(0.1s)
+            end
+        end
+    end
+    
+    GoUntil->>Pub: 发布停止命令 (0, 0)
+ GoUntil-->>Run: 函数返回
+            </div>
+        </div>
+
+        <div class="diagram-container">
+            <div class="diagram-title">rotate_until 运行时序图</div>
+            <div class="mermaid">
+sequenceDiagram
+    participant Run as run 线程
+    participant RotUntil as rotate_until 函数
+    participant OdomLock as odom_lock
+    participant Pub as cmd_vel_pub
+    
+    Run->>RotUntil: 调用 rotate_until("left", 45.0, 1.0)
+    RotUntil->>OdomLock: 获取锁
+    OdomLock->>RotUntil: 返回 init_yaw
+    RotUntil->>OdomLock: 释放锁
+    
+    loop 旋转循环
+        RotUntil->>OdomLock: 获取锁
+        OdomLock->>RotUntil: 返回 current_yaw
+        RotUntil->>OdomLock: 释放锁
+        RotUntil->>RotUntil: 计算 angle_diff
+        RotUntil->>RotUntil: 处理 wrap-around
+        RotUntil->>RotUntil: 计算 rotated_deg
+        
+        alt 达到目标角度
+            RotUntil->>RotUntil: 退出循环
+        else 未达目标
+            RotUntil->>RotUntil: direction == "left"?
+            alt 左转
+                RotUntil->>Pub: 发布 velocity(0, +0.5)
+            else 右转
+                RotUntil->>Pub: 发布 velocity(0, -0.5)
+            end
+            Pub-->>RotUntil: 发布成功
+            RotUntil->>RotUntil: spin_once(0.1s)
+        end
+    end
+    
+    RotUntil->>Pub: 发布停止命令 (0, 0)
+    RotUntil-->>Run: 函数返回
+            </div>
+        </div>
+
+        <div class="diagram-container">
+            <div class="diagram-title">LiDAR 回调数据处理时序图</div>
+            <div class="mermaid">
+sequenceDiagram
+    participant ROS as ROS2 系统
+    participant Callback as lidar_callback
+    participant Lock as lidar_lock
+    participant Node as 节点状态
+    
+    ROS->>Callback: 接收 /scan 消息
+    Callback->>Node: 更新 last_lidar_time
+    Callback->>Node: 设置 has_lidar_data = True
+    
+    Callback->>Lock: 获取锁
+    Lock-->>Callback: 锁获取成功
+    
+    Callback->>Callback: 计算索引位置
+    Callback->>Node: 更新 front = ranges[0]
+    Callback->>Node: 更新 left = ranges[90]
+    Callback->>Node: 更新 right = ranges[270]
+    Callback->>Node: 更新 back = ranges[180]
+    Callback->>Node: 更新 front_left = ranges[315]
+    Callback->>Node: 更新 front_right = ranges[45]
+    
+    Callback->>Lock: 释放锁
+    Lock-->>Callback: 锁释放成功
+    Callback-->>ROS: 回调完成
+            </div>
+        </div>
+
+        <h2>核心功能模块</h2>
+        
+        <h3>1. LiDAR 数据处理</h3>
+        <div class="code-block">
+# 270 度扫描，索引映射
+front_idx = 0      # 0°  - 正前方
+left_idx = 90      # 90°  - 左侧
+right_idx = 270    # 270° - 右侧
+back_idx = 180     # 180° - 后方
+front_left_idx = 315   # -45°
+front_right_idx = 45   # +45°
+        </div>
+        <p>使用 <code>lidar_lock</code> 确保线程安全访问 LiDAR 数据。</p>
+
+        <h3>2. 里程计跟踪</h3>
+        <div class="code-block">
+# 从四元数转换为欧拉角
+_, _, self.yaw = quaternion_to_euler(orientation)
+self.x = position.x
+self.y = position.y
+        </div>
+        <p>使用 <code>odom_lock</code> 确保线程安全访问位置数据。</p>
+
+        <h3>3. 移动控制函数</h3>
+        <table class="param-table">
+            <tr>
+                <th>函数</th>
+                <th>功能</th>
+                <th>参数</th>
+                <th>障碍物检测</th>
+            </tr>
+            <tr>
+                <td><code>rotate_by()</code></td>
+                <td>按时间旋转</td>
+                <td>direction, ang_vel, duration</td>
+                <td>无</td>
+            </tr>
+            <tr>
+                <td><code>go_by()</code></td>
+                <td>按时间前进/后退</td>
+                <td>direction, lin_vel, duration</td>
+                <td>有（前方）</td>
+            </tr>
+            <tr>
+                <td><code>go_until()</code></td>
+                <td>前进指定距离</td>
+                <td>distance, err</td>
+                <td>有（前方）</td>
+            </tr>
+            <tr>
+                <td><code>roatae_unitl()</code></td>
+                <td>旋转指定角度</td>
+                <td>direction, deg, err</td>
+                <td>无</td>
+            </tr>
+        </table>
+
+        <h2>当前 run() 实现</h2>
+        <div class="code-block">
+def run(self):
+    time.sleep(0.5)
+    # 测试序列：左转 45 度，前进 2 米
+    self.roatae_unitl("left", 45.0, 1.0)
+    self.go_until(2, 0.1)
+        </div>
+        <p class="highlight">注意：当前仅为测试序列，需要实现完整探索策略</p>
+
+        <h2>待实现功能</h2>
+        <div class="flowchart">
+            <h3>后续工作</h3>
+            <ol>
+                <li>补充后续的运动控制逻辑</li>
+                <li>进行实际实验验证</li>
+            </ol>
+        </div>
+
+        <h2>配置参数</h2>
+        <table class="param-table">
+            <tr>
+                <th>参数</th>
+                <th>当前值</th>
+                <th>单位</th>
+                <th>说明</th>
+            </tr>
+            <tr>
+                <td>safe_distance</td>
+                <td>0.6</td>
+                <td>米</td>
+                <td>障碍物避免安全距离</td>
+            </tr>
+            <tr>
+                <td>linear_vel</td>
+                <td>0.3</td>
+                <td>米/秒</td>
+                <td>前进速度</td>
+            </tr>
+            <tr>
+                <td>angular_vel</td>
+                <td>0.5</td>
+                <td>弧度/秒</td>
+                <td>旋转速度</td>
+            </tr>
+            <tr>
+                <td>explore_angular</td>
+                <td>0.05</td>
+                <td>弧度/秒</td>
+                <td>探索时轻微旋转速度</td>
+            </tr>
+            <tr>
+                <td>max_time</td>
+                <td>90</td>
+                <td>秒</td>
+                <td>最大运行时间</td>
+            </tr>
+        </table>
+
+        <h2>运行方式</h2>
+        <div class="code-block"># 构建工作空间
+colcon build --packages-select com2009_teamxx_2026
+
+# 源环境
+source install/setup.bash
+
+# 使用 launch 文件运行
+ros2 launch task2.launch.py
+
+# 或直接运行脚本
+ros2 run com2009_teamxx_2026 task2.py
+        </div>
+
+        <h2>已知问题</h2>
+        <ul>
+            <li>探索策略需要实现（当前仅为测试序列）</li>
+            <li>区域跟踪功能未实现</li>
+            <li>需要在仿真和真机上测试调参</li>
+        </ul>
+
+        <footer>
+            <p>文档生成时间：2026 年 3 月 11 日 | ROS2 版本：Humble | 机器人：TurtleBot3 Waffle</p>
+        </footer>
+    </div>
+</body>
+</html>
