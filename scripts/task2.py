@@ -261,7 +261,7 @@ class ObstacleAvoidance(Node):
         with odom_lock:
             init_yaw = self.yaw
 
-        self.get_logger().warn(
+        self.get_logger().info(
             f'Starting rotate_until: direction={direction}, '
             f'deg={deg:.1f}deg, err={err:.1f}deg, '
             f'from {math.degrees(init_yaw):.1f}deg'
@@ -331,7 +331,7 @@ class ObstacleAvoidance(Node):
                 # 检查是否超过 90 秒
                 if self.start_time:
                     elapsed = current_time - self.start_time
-                    if elapsed >= 90:
+                    if elapsed >= 9000:
                         self.get_logger().info('90 seconds elapsed, stopping')
                         self.running = False
 
@@ -356,18 +356,38 @@ class ObstacleAvoidance(Node):
 
     def run(self):
         time.sleep(0.5)
-        # self.rotate_until("left", 45.0, 1.0)
-        # self.go_until(math.sqrt(2.0)*1.5, 0.1)
-        # self.rotate_until("left", 45.0, 1.0)
-        # self.go_until(2, 0.1)
-        # self.go_until(0.2, 0.1)
-        # self.rotate_until("right", 90.0, 1.0)
-        # self.go_until(0.7, 0.1)
-        # self.rotate_until("left", 45.0, 1.0)
-        # self.go_until(0.2, 0.1)
-        self.rotate_until("left", 45.0, 1.0)
-        self.go_until(2, 0.1)
 
+        self.rotate_until("left", 45.0, 1.0)
+        self.go_until(math.sqrt(2.0)*1.5, 0.1)
+        self.rotate_until("right", 135.0, 1.0)
+
+        self.go_until(2.2, 0.1)
+        self.rotate_until("right", 90.0, 1.0)
+        self.go_until(1, 0.1)
+        self.rotate_until("left", 120.0, 1.0)
+        self.go_until(2, 0.1)
+        self.rotate_until("right", 120.0, 1.0)
+
+        self.go_until(2.4, 0.1)
+        self.rotate_until("right", 90.0, 1.0)
+        self.go_until(1, 0.1)
+        self.rotate_until("left", 120.0, 1.0)
+        self.go_until(2, 0.1)
+        self.rotate_until("right", 120.0, 1.0)
+
+        self.go_until(2.4, 0.1)
+        self.rotate_until("right", 90.0, 1.0)
+        self.go_until(1, 0.1)
+        self.rotate_until("left", 120.0, 1.0)
+        self.go_until(2, 0.1)
+        self.rotate_until("right", 120.0, 1.0)
+
+        self.go_until(2.4, 0.1)
+        self.rotate_until("right", 90.0, 1.0)
+        self.go_until(1, 0.1)
+        self.rotate_until("left", 120.0, 1.0)
+        self.go_until(2, 0.1)
+        self.rotate_until("right", 120.0, 1.0)
 
 def main():
     rclpy.init()
