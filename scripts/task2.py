@@ -117,7 +117,7 @@ class ObstacleAvoidance(Node):
                start_time) < duration:
             vel_cmd = TwistStamped()
             vel_cmd.header.stamp = self.get_clock().now().to_msg()
-            vel_cmd.header.frame_id = 'base_footprint'
+            vel_cmd.header.frame_id = 'ctrl'
             vel_cmd.twist.linear.x = 0.0
 
             if direction == 'left':
@@ -163,7 +163,7 @@ class ObstacleAvoidance(Node):
 
             vel_cmd = TwistStamped()
             vel_cmd.header.stamp = self.get_clock().now().to_msg()
-            vel_cmd.header.frame_id = 'base_footprint'
+            vel_cmd.header.frame_id = 'ctrl'
             vel_cmd.twist.angular.z = 0.0
 
             if direction == 'front':
@@ -236,7 +236,7 @@ class ObstacleAvoidance(Node):
             # 发布前进命令
             vel_cmd = TwistStamped()
             vel_cmd.header.stamp = self.get_clock().now().to_msg()
-            vel_cmd.header.frame_id = 'base_footprint'
+            vel_cmd.header.frame_id = 'ctrl'
             vel_cmd.twist.linear.x = self.linear_vel
             vel_cmd.twist.angular.z = 0.0
 
@@ -292,7 +292,7 @@ class ObstacleAvoidance(Node):
             # 发布旋转命令
             vel_cmd = TwistStamped()
             vel_cmd.header.stamp = self.get_clock().now().to_msg()
-            vel_cmd.header.frame_id = 'base_footprint'
+            vel_cmd.header.frame_id = 'ctrl'
             vel_cmd.twist.linear.x = 0.0
 
             if direction == 'left':
