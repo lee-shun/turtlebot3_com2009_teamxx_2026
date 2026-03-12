@@ -533,6 +533,45 @@ sequenceDiagram
         <h2>核心功能模块</h2>
         
         <h3>1. LiDAR 数据处理</h3>
+        <p>LiDAR 传感器通过旋转发射激光脉冲，通过"飞行时间"(time of flight) 测量距离。TurtleBot3 的 LiDAR 提供 360° 扫描，每个 1° 一个测量点，共 360 个数据点。</p>
+        <p><strong>LaserScan 消息结构:</strong></p>
+        <table class="param-table">
+            <tr>
+                <th>字段</th>
+                <th>类型</th>
+                <th>说明</th>
+            </tr>
+            <tr>
+                <td>angle_min</td>
+                <td>float32</td>
+                <td>扫描起始角度 (0 弧度，正前方)</td>
+            </tr>
+            <tr>
+                <td>angle_max</td>
+                <td>float32</td>
+                <td>扫描结束角度 (6.28 弧度 ≈ 360°)</td>
+            </tr>
+            <tr>
+                <td>angle_increment</td>
+                <td>float32</td>
+                <td>角度增量 (0.0175 弧度 ≈ 1°)</td>
+            </tr>
+            <tr>
+                <td>ranges</td>
+                <td>float32[]</td>
+                <td>360 个距离测量值 (米)</td>
+            </tr>
+            <tr>
+                <td>range_min</td>
+                <td>float32</td>
+                <td>最小可测距离</td>
+            </tr>
+            <tr>
+                <td>range_max</td>
+                <td>float32</td>
+                <td>最大可测距离</td>
+            </tr>
+        </table>
         <div class="code-block">
 # 270 度扫描，索引映射
 front_idx = 0      # 0°  - 正前方
@@ -541,6 +580,9 @@ right_idx = 270    # 270° - 右侧
 back_idx = 180     # 180° - 后方
 front_left_idx = 315   # -45°
 front_right_idx = 45   # +45°
+        </div>
+        <div style="text-align: center; margin: 20px 0;">
+            <img src="/home/ls/my_ros2_docker_workspace/com2009_teamxx_2026/doc/lidar_illustrated.png" alt="LiDAR 扫描方向示意图" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
         </div>
         <p>使用 <code>lidar_lock</code> 确保线程安全访问 LiDAR 数据。</p>
 
